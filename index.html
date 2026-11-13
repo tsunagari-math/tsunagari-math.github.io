@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>つながりMathガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ========== 色や大きさの「部品」をまとめて定義 ========== */
+  :root {
+    --ink: #3b3a52;
+    --ink-soft: #77768f;
+    --card: #ffffff;
+    --shadow: 0 6px 18px rgba(80, 70, 140, .12);
+    --shadow-lift: 0 14px 28px rgba(80, 70, 140, .22);
+    --radius: 22px;
+    /* 領域の色 */
+    --dom-A: #ff7a9c;  /* 数と計算・数と式 */
+    --dom-B: #3fa7f5;  /* 図形 */
+    --dom-C: #9b7bf2;  /* 測定・変化と関係・関数 */
+    --dom-D: #ff9f43;  /* データ */
+    /* セクションの色 */
+    --review: #2f8fe8;
+    --review-bg: #e8f3ff;
+    --next: #1faa6b;
+    --next-bg: #e6f8ee;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "BIZ UDPGothic", "Meiryo", sans-serif;
+    color: var(--ink);
+    background: linear-gradient(160deg, #fff4d9 0%, #ffe3ec 45%, #dff1ff 100%) fixed;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+  input { font: inherit; color: inherit; }
+
+  /* ========== 上のバー ========== */
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    max-width: 1000px; margin: 0 auto; padding: 14px 16px 0;
+  }
+  .brand { font-weight: 800; font-size: 1.15rem; margin-right: auto; padding: 6px 4px; }
+  .chip {
+    background: rgba(255,255,255,.85); border-radius: 999px; padding: 8px 14px;
+    box-shadow: var(--shadow); font-weight: 700; font-size: .95rem;
+    max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    transition: transform .15s;
+  }
+  button.chip:hover { transform: translateY(-2px); }
+
+  main { max-width: 1000px; margin: 0 auto; padding: 12px 16px 40px; }
+  .foot { max-width: 1000px; margin: 0 auto; padding: 0 16px 110px; text-align: center; font-size: .75rem; color: var(--ink-soft); }
+
+  h1 { font-size: clamp(1.5rem, 4.5vw, 2.2rem); margin: 18px 0 4px; text-align: center; font-weight: 800; }
+  .lead { text-align: center; font-size: 1.1rem; font-weight: 700; margin: 6px 0 22px; }
+
+  /* ========== カード共通 ========== */
+  .grid { display: grid; gap: 14px; }
+  .grid.grades { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .grid.units { grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); }
+  .card {
+    display: block; width: 100%; text-align: left;
+    background: var(--card); border-radius: var(--radius); padding: 16px;
+    box-shadow: var(--shadow); transition: transform .18s, box-shadow .18s;
+  }
+  .card:hover, .card:focus-visible { transform: translateY(-5px); box-shadow: var(--shadow-lift); outline: none; }
+
+  /* 学年カード */
+  .grade-card { text-align: center; padding: 18px 12px 14px; }
+  .grade-card .emoji { font-size: 2.6rem; line-height: 1.2; }
+  .grade-card .gname { font-size: 1.25rem; font-weight: 800; }
+  .grade-card .count { font-size: .9rem; color: var(--ink-soft); font-weight: 700; }
+  .bar { height: 8px; border-radius: 99px; background: #eeeaf7; overflow: hidden; margin-top: 8px; }
+  .bar > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ffc64d, #ff7a9c); }
+
+  /* 単元カード */
+  .unit-card { border-left: 10px solid var(--dom); display: flex; align-items: center; gap: 8px; min-height: 68px; }
+  .unit-card .uname { font-weight: 700; flex: 1; overflow-wrap: anywhere; }
+  .unit-card .mark { font-size: 1.3rem; }
+  .unit-card.done { background: #f3fbf6; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0 0 18px; }
+  .badge {
+    display: inline-block; background: var(--dom); color: #fff; font-weight: 700;
+    border-radius: 99px; padding: 3px 12px; font-size: .85rem;
+  }
+  .badge.gray { background: #8c8aa6; }
+
+  .back { font-weight: 700; padding: 8px 14px; border-radius: 99px; background: rgba(255,255,255,.75); box-shadow: var(--shadow); }
+  .back:hover { background: #fff; }
+
+  /* ========== 単元ページ ========== */
+  .hero { background: var(--card); border-radius: 28px; box-shadow: var(--shadow); padding: 22px 20px; margin: 16px 0; text-align: center; border-top: 10px solid var(--dom); }
+  .hero h1 { margin: 10px 0 14px; }
+  .hero .hint { margin: 16px 0 0; font-size: .9rem; font-weight: 700; color: var(--ink-soft); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-weight: 800; font-size: 1.1rem; border-radius: 99px; padding: 13px 26px;
+    cursor: pointer; user-select: none; transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 6px 0 rgba(0,0,0,.14);
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,.14); }
+  .btn.eboard { background: linear-gradient(180deg, #37c97f, #1faa6b); color: #fff; }
+  .btn.small { font-size: .85rem; padding: 6px 12px; box-shadow: 0 3px 0 rgba(0,0,0,.14); white-space: nowrap; }
+  .btn.done-btn { background: linear-gradient(180deg, #ffd35c, #ffb52e); color: #5a3b00; font-size: 1.25rem; padding: 16px 36px; }
+  .btn.done-btn.is-done { background: linear-gradient(180deg, #7fe0a8, #37c97f); color: #fff; }
+  .btn.plain { background: #eeeaf7; box-shadow: none; }
+  .btn.primary { background: linear-gradient(180deg, #6fb7ff, #2f8fe8); color: #fff; }
+  .done-wrap { text-align: center; margin: 26px 0; }
+  .done-note { font-size: .85rem; color: var(--ink-soft); margin-top: 10px; font-weight: 500; }
+
+  .section { border-radius: 28px; padding: 18px 16px; margin: 18px 0; }
+  .section h2 { margin: 0 0 4px; font-size: 1.2rem; font-weight: 800; }
+  .section .advice { margin: 0 0 12px; font-weight: 700; font-size: .95rem; }
+  .section.review { background: var(--review-bg); border: 3px solid #b9dbff; }
+  .section.review h2, .section.review .advice { color: #1766b8; }
+  .section.next { background: var(--next-bg); border: 3px solid #a9e6c5; }
+  .section.next h2 { color: #117a4b; margin-bottom: 12px; }
+  .link-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-left: 10px solid var(--dom); cursor: pointer; margin-bottom: 10px; }
+  .link-card:last-child { margin-bottom: 0; }
+  .link-card .uname { font-weight: 700; flex: 1; overflow-wrap: anywhere; }
+  .link-card .g { font-size: .8rem; font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
+
+  /* ========== 育成ゲーム（左下の植物） ========== */
+  .plant {
+    position: fixed; left: 14px; bottom: 14px; z-index: 5;
+    background: rgba(255,255,255,.93); border-radius: 24px; box-shadow: var(--shadow);
+    padding: 8px 14px 8px 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .plant .p-emoji { font-size: 2.4rem; line-height: 1; transition: transform .3s; }
+  .plant.pop .p-emoji { animation: pop .6s; }
+  @keyframes pop { 30% { transform: scale(1.5) rotate(-8deg); } 60% { transform: scale(.9) rotate(6deg); } }
+  .plant .p-text { font-size: .8rem; font-weight: 700; color: var(--ink-soft); line-height: 1.3; }
+  .plant .p-text b { color: var(--ink); font-size: 1rem; }
+
+  /* ========== ダイアログ ========== */
+  dialog { border: none; border-radius: 26px; padding: 22px; width: min(92vw, 460px); box-shadow: var(--shadow-lift); color: var(--ink); }
+  dialog::backdrop { background: rgba(50, 40, 90, .45); }
+  dialog h2 { margin: 0 0 10px; font-size: 1.25rem; }
+  dialog p { margin: 6px 0 12px; }
+  .field { display: block; margin: 12px 0; font-weight: 700; }
+  .field input[type=text], .field input[type=url] {
+    display: block; width: 100%; margin-top: 6px; padding: 12px 14px; border-radius: 14px;
+    border: 3px solid #ddd8ee; background: #fbfaff; font-weight: 500;
+  }
+  .field input:focus { outline: none; border-color: #6fb7ff; }
+  .check { display: flex; align-items: center; gap: 10px; font-weight: 700; margin: 12px 0; }
+  .check input { width: 22px; height: 22px; }
+  .err { color: #d6336c; font-weight: 700; min-height: 1.4em; margin: 4px 0; font-size: .92rem; }
+  .small-note { font-size: .82rem; color: var(--ink-soft); word-break: break-all; }
+  .actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 14px; }
+  .actions .btn { font-size: 1rem; padding: 10px 20px; }
+
+  /* ========== お知らせ（トースト） ========== */
+  .toast {
+    position: fixed; right: 14px; bottom: 18px; z-index: 20; max-width: 70vw;
+    background: #3b3a52; color: #fff; padding: 10px 16px; border-radius: 16px; font-weight: 700; font-size: .9rem;
+    opacity: 0; transform: translateY(10px); transition: opacity .25s, transform .25s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: none; }
+
+  @media (max-width: 520px) {
+    .grid.grades { grid-template-columns: repeat(2, 1fr); }
+    .grid.units { grid-template-columns: 1fr; }
+    .brand { font-size: .9rem; white-space: nowrap; }
+    .topbar { gap: 6px; padding-left: 10px; padding-right: 10px; }
+    .chip { max-width: 34vw; padding: 8px 10px; font-size: .85rem; }
+    .toast { left: 14px; right: 14px; bottom: 84px; max-width: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="brand" data-go="#/">🧭 つながりMathガイド</button>
+  <button class="chip" id="nickChip" data-action="editNick"></button>
+  <button class="chip" data-action="openSettings" aria-label="設定">⚙️</button>
+</header>
+
+<main id="app"></main>
+<footer class="foot">「eboardで学ぶ」を押すと、NPO法人eboardのサイトが開きます。このアプリはeboardの公式アプリではありません。</footer>
+
+<div class="plant" id="plant" aria-live="polite"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<!-- ニックネーム -->
+<dialog id="dlgNick">
+  <h2>👤 ニックネーム</h2>
+  <label class="field">ニックネームを入力してください
+    <input type="text" id="nickInput" maxlength="20" autocomplete="off">
+  </label>
+  <p class="small-note" id="nickFirstNote">※ 事前に伝えたニックネームがある場合は、同じものを入れてください。あとから変えることもできます。</p>
+  <div class="err" id="nickErr"></div>
+  <div class="actions">
+    <button class="btn plain" data-action="closeDialog" id="nickCancel">キャンセル</button>
+    <button class="btn primary" data-action="saveNick">保存する</button>
+  </div>
+</dialog>
+
+<!-- クラウド同期の設定をうながす -->
+<dialog id="dlgPrompt">
+  <h2>☁️ クラウド同期の設定</h2>
+  <p>がんばった記録をとどけるために、クラウド同期の設定をしましょう。</p>
+  <div class="actions">
+    <button class="btn plain" data-action="closeDialog">あとで</button>
+    <button class="btn primary" data-action="openSettings">設定する</button>
+  </div>
+</dialog>
+
+<!-- 設定 -->
+<dialog id="dlgSettings">
+  <h2>⚙️ 設定</h2>
+  <label class="check"><input type="checkbox" id="syncOn"> クラウド同期をONにする</label>
+  <label class="field">GAS URL（教えてもらったURL）
+    <input type="url" id="syncUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+  </label>
+  <div class="err" id="setErr"></div>
+  <p class="small-note">ユーザーID：<span id="uidText"></span></p>
+  <div class="actions">
+    <button class="btn plain" data-action="closeDialog">とじる</button>
+    <button class="btn primary" data-action="saveSettings">保存する</button>
+  </div>
+</dialog>
+
+<!-- 単元データ（開発中は別ファイル。配布用は build.ps1 がこの1行を中身に置きかえます） -->
+<script>
+// ============================================================
+// つながりMathガイド 単元データ（たたき台 v0.1 / 2026-11-12）
+// ============================================================
+// ■ このファイルの見方
+//   1行が1つの単元です。
+//     id    … eboard の単元番号（https://www.eboard.jp/content/{id}/ の {id}）
+//     grade … 学年
+//     domain… 領域（下の DOMAIN_LABELS を参照）
+//     name  … 単元名（eboard の表記そのまま）
+//     pre   … 前提単元の id（＝復習セクションに出す単元）
+//
+// ■ 確かなもの / まだ「案」のもの
+//   ✅ id・grade・name   … 2026-11-12 に eboard の単元一覧から取得（確認済み）
+//   ✅ 中学・数学Ⅰの domain … eboard の表示（数と式／関数／図形 など）に合わせた
+//   ⚠️ 小学校の domain   … eboard に表示がないため Claude が学習指導要領をもとに付けた【案】
+//   ⚠️ pre（前提関係）    … すべて Claude が作った【案】。ひろみんさんの確認が必要
+//
+// ■ 「次のステップ」（next）はここに書きません。
+//   pre から自動で逆算します（同じことを2か所に書くと、片方だけ直し忘れるため）。
+// ============================================================
+
+const EBOARD_BASE = "https://www.eboard.jp/content/";
+
+// 領域の名前（学校段階ごとに呼び方が少し違います）
+const DOMAIN_LABELS = {
+  小: { A: "数と計算", B: "図形", C: "測定・変化と関係", D: "データの活用" },
+  中: { A: "数と式", B: "図形", C: "関数", D: "データの活用" },
+  高: { A: "数と式", B: "図形と計量", C: "二次関数", D: "データの分析" },
+};
+
+const GRADES = [
+  { key: "小1", emoji: "🐤" }, { key: "小2", emoji: "🐶" }, { key: "小3", emoji: "🐱" },
+  { key: "小4", emoji: "🐰" }, { key: "小5", emoji: "🐧" }, { key: "小6", emoji: "🐬" },
+  { key: "中1", emoji: "🦉" }, { key: "中2", emoji: "🐘" }, { key: "中3", emoji: "🦁" },
+  { key: "数学Ⅰ", emoji: "🐉" },
+];
+
+const UNITS = [
+  // ---------- 小1（9単元） ----------
+  { id: 158, grade: "小1", domain: "A", name: "10までのかず", pre: [] },
+  { id: 159, grade: "小1", domain: "A", name: "たしざん", pre: [158] },
+  { id: 160, grade: "小1", domain: "A", name: "ひきざん", pre: [158] },
+  { id: 161, grade: "小1", domain: "A", name: "20までのかず", pre: [158, 159, 160] },
+  { id: 162, grade: "小1", domain: "A", name: "10よりおおきいたしざん、ひきざん", pre: [161] },
+  { id: 163, grade: "小1", domain: "A", name: "100までのかず", pre: [161] },
+  { id: 544, grade: "小1", domain: "A", name: "100までのたしざん、ひきざん", pre: [162, 163] },
+  { id: 534, grade: "小1", domain: "C", name: "とけいをよむ", pre: [161] },
+  { id: 164, grade: "小1", domain: "A", name: "たしざん、ひきざんのぶんしょうだい", pre: [159, 160] },
+
+  // ---------- 小2（19単元） ----------
+  { id: 535, grade: "小2", domain: "D", name: "グラフとひょう", pre: [161] },
+  { id: 166, grade: "小2", domain: "A", name: "２けた+１けたのたしざん", pre: [162, 544] },
+  { id: 167, grade: "小2", domain: "A", name: "２けた－１けたのひきざん", pre: [162, 544] },
+  { id: 169, grade: "小2", domain: "A", name: "２けたのひっさん", pre: [166, 167] },
+  { id: 165, grade: "小2", domain: "C", name: "時間と生活", pre: [534] },
+  { id: 168, grade: "小2", domain: "C", name: "ながさをはかる", pre: [163] },
+  { id: 170, grade: "小2", domain: "A", name: "100より大きい数（３けたの数）", pre: [163] },
+  { id: 171, grade: "小2", domain: "C", name: "かさをあらわす", pre: [170] },
+  { id: 172, grade: "小2", domain: "A", name: "２けたのたし算", pre: [169, 170] },
+  { id: 173, grade: "小2", domain: "A", name: "３けた－２けたのひき算", pre: [169, 170] },
+  { id: 536, grade: "小2", domain: "A", name: "計算のくふう", pre: [169] },
+  { id: 175, grade: "小2", domain: "B", name: "三角形と四角形", pre: [] },
+  { id: 174, grade: "小2", domain: "A", name: "かけ算と九九", pre: [162] },
+  { id: 537, grade: "小2", domain: "A", name: "九九のきまり", pre: [174] },
+  { id: 545, grade: "小2", domain: "C", name: "メートルであらわす", pre: [168] },
+  { id: 177, grade: "小2", domain: "A", name: "1000より大きい数", pre: [170] },
+  { id: 538, grade: "小2", domain: "A", name: "分数（２年生）", pre: [174] },
+  { id: 539, grade: "小2", domain: "B", name: "はこの形", pre: [175] },
+  { id: 179, grade: "小2", domain: "A", name: "文しょうだい（２年生）", pre: [164, 169, 174] },
+
+  // ---------- 小3（19単元） ----------
+  { id: 540, grade: "小3", domain: "A", name: "かけ算のおさらい", pre: [174, 537] },
+  { id: 180, grade: "小3", domain: "A", name: "わり算", pre: [174] },
+  { id: 546, grade: "小3", domain: "A", name: "九九にないわり算", pre: [180, 540] },
+  { id: 182, grade: "小3", domain: "A", name: "３けたのたし算、ひき算（筆算）", pre: [172, 173] },
+  { id: 184, grade: "小3", domain: "C", name: "時間と時こく", pre: [165] },
+  { id: 183, grade: "小3", domain: "A", name: "大きな数と計算", pre: [177] },
+  { id: 215, grade: "小3", domain: "D", name: "表とぼうグラフ", pre: [535] },
+  { id: 547, grade: "小3", domain: "A", name: "暗算で計算しよう", pre: [172, 173] },
+  { id: 185, grade: "小3", domain: "C", name: "長さをあらわす：km（キロメートル）", pre: [545] },
+  { id: 187, grade: "小3", domain: "A", name: "あまりのあるわり算", pre: [180] },
+  { id: 212, grade: "小3", domain: "A", name: "かけ算の筆算（×１けた）", pre: [540] },
+  { id: 181, grade: "小3", domain: "B", name: "円と球（きゅう）", pre: [168] },
+  { id: 213, grade: "小3", domain: "C", name: "重さをあらわす", pre: [177] },
+  { id: 214, grade: "小3", domain: "A", name: "分数（３年生）", pre: [538] },
+  { id: 216, grade: "小3", domain: "A", name: "小数（３年生）", pre: [168, 171] },
+  { id: 186, grade: "小3", domain: "B", name: "三角形", pre: [175, 181] },
+  { id: 217, grade: "小3", domain: "A", name: "×２けたの筆算", pre: [212] },
+  { id: 218, grade: "小3", domain: "A", name: "□が入った式", pre: [180, 182] },
+  { id: 219, grade: "小3", domain: "A", name: "文章題（３年生）", pre: [179, 180] },
+
+  // ---------- 小4（16単元） ----------
+  { id: 222, grade: "小4", domain: "A", name: "大きな数（億、兆）とかけ算", pre: [183, 217] },
+  { id: 224, grade: "小4", domain: "D", name: "折れ線グラフ", pre: [215] },
+  { id: 221, grade: "小4", domain: "A", name: "わり算の筆算", pre: [187, 212] },
+  { id: 220, grade: "小4", domain: "B", name: "角", pre: [186] },
+  { id: 259, grade: "小4", domain: "B", name: "直線と四角形", pre: [175, 220] },
+  { id: 225, grade: "小4", domain: "A", name: "小数（４年生）", pre: [216] },
+  { id: 257, grade: "小4", domain: "A", name: "２けたでわる わり算の筆算", pre: [217, 221] },
+  { id: 223, grade: "小4", domain: "A", name: "計算のきまり", pre: [218, 536] },
+  { id: 541, grade: "小4", domain: "C", name: "倍の見方と割合", pre: [180, 219] },
+  { id: 258, grade: "小4", domain: "A", name: "がい数（およその数）", pre: [222] },
+  { id: 226, grade: "小4", domain: "B", name: "面積", pre: [175, 217] },
+  { id: 260, grade: "小4", domain: "A", name: "小数×整数", pre: [217, 225] },
+  { id: 263, grade: "小4", domain: "A", name: "小数÷整数", pre: [225, 257] },
+  { id: 261, grade: "小4", domain: "A", name: "仮分数と帯分数", pre: [214] },
+  { id: 542, grade: "小4", domain: "C", name: "変わり方調べ（４年生）", pre: [218] },
+  { id: 262, grade: "小4", domain: "B", name: "直方体と立方体", pre: [259, 539] },
+
+  // ---------- 小5（18単元） ----------
+  { id: 554, grade: "小5", domain: "A", name: "整数と小数", pre: [225] },
+  { id: 264, grade: "小5", domain: "B", name: "体積", pre: [226, 262] },
+  { id: 553, grade: "小5", domain: "C", name: "比例", pre: [542] },
+  { id: 265, grade: "小5", domain: "A", name: "小数×小数", pre: [260, 554] },
+  { id: 266, grade: "小5", domain: "A", name: "小数÷小数", pre: [263, 265] },
+  { id: 267, grade: "小5", domain: "B", name: "合同な図形、内角", pre: [220, 259] },
+  { id: 268, grade: "小5", domain: "A", name: "倍数と約数", pre: [221] },
+  { id: 269, grade: "小5", domain: "A", name: "約分と通分", pre: [261, 268] },
+  { id: 271, grade: "小5", domain: "A", name: "分数と小数", pre: [261, 263] },
+  { id: 270, grade: "小5", domain: "B", name: "三角形・四角形の面積", pre: [226, 259] },
+  { id: 272, grade: "小5", domain: "C", name: "平均、単位量あたりの大きさ", pre: [263, 266] },
+  { id: 286, grade: "小5", domain: "C", name: "速さ", pre: [272] },
+  { id: 273, grade: "小5", domain: "C", name: "割合", pre: [266, 541] },
+  { id: 274, grade: "小5", domain: "C", name: "百分率と歩合", pre: [273] },
+  { id: 275, grade: "小5", domain: "D", name: "帯グラフと円グラフ", pre: [224, 274] },
+  { id: 700, grade: "小5", domain: "C", name: "変わり方調べ（５年生）", pre: [542, 553] },
+  { id: 276, grade: "小5", domain: "B", name: "円と多角形", pre: [181, 265] },
+  { id: 555, grade: "小5", domain: "B", name: "角柱と円柱", pre: [262, 276] },
+
+  // ---------- 小6（10単元） ----------
+  { id: 281, grade: "小6", domain: "B", name: "対称な図形", pre: [267] },
+  { id: 283, grade: "小6", domain: "A", name: "文字と式", pre: [218, 223] },
+  { id: 282, grade: "小6", domain: "A", name: "分数のかけ算", pre: [269] },
+  { id: 556, grade: "小6", domain: "A", name: "分数のわり算", pre: [271, 282] },
+  { id: 284, grade: "小6", domain: "C", name: "比", pre: [269, 273] },
+  { id: 285, grade: "小6", domain: "B", name: "拡大と縮小", pre: [267, 284] },
+  { id: 288, grade: "小6", domain: "B", name: "円の面積、立体の体積", pre: [264, 276, 555] },
+  { id: 290, grade: "小6", domain: "D", name: "データの調べ方", pre: [272, 275] },
+  { id: 287, grade: "小6", domain: "C", name: "比例と反比例", pre: [283, 553] },
+  { id: 289, grade: "小6", domain: "D", name: "場合の数", pre: [] },
+
+  // ---------- 中1（15単元） ----------
+  { id: 1, grade: "中1", domain: "A", name: "正負の数", pre: [554] },
+  { id: 2, grade: "中1", domain: "A", name: "加法と減法", pre: [1, 269] },
+  { id: 3, grade: "中1", domain: "A", name: "乗法と除法", pre: [2, 556] },
+  { id: 476, grade: "中1", domain: "A", name: "数の集合と素数の積", pre: [3, 268] },
+  { id: 4, grade: "中1", domain: "A", name: "文字式ときまり", pre: [3, 283] },
+  { id: 5, grade: "中1", domain: "A", name: "文字式の計算（１年）", pre: [4] },
+  { id: 6, grade: "中1", domain: "A", name: "方程式", pre: [5] },
+  { id: 7, grade: "中1", domain: "A", name: "方程式の利用", pre: [6, 273, 286] },
+  { id: 8, grade: "中1", domain: "C", name: "比例", pre: [4, 287] },
+  { id: 9, grade: "中1", domain: "C", name: "比例とグラフ", pre: [8] },
+  { id: 10, grade: "中1", domain: "C", name: "反比例", pre: [8] },
+  { id: 11, grade: "中1", domain: "B", name: "平面図形", pre: [276, 281] },
+  { id: 12, grade: "中1", domain: "B", name: "空間図形", pre: [555] },
+  { id: 13, grade: "中1", domain: "B", name: "立体の体積と表面積", pre: [12, 288] },
+  { id: 19, grade: "中1", domain: "D", name: "資料の活用", pre: [290] },
+
+  // ---------- 中2（12単元） ----------
+  { id: 317, grade: "中2", domain: "A", name: "文字式の計算（２年）", pre: [5] },
+  { id: 557, grade: "中2", domain: "A", name: "文字式の利用", pre: [317] },
+  { id: 15, grade: "中2", domain: "A", name: "連立方程式", pre: [6, 317] },
+  { id: 16, grade: "中2", domain: "A", name: "連立方程式の利用", pre: [7, 15] },
+  { id: 17, grade: "中2", domain: "C", name: "一次関数", pre: [9, 15] },
+  { id: 18, grade: "中2", domain: "C", name: "一次関数の利用", pre: [17] },
+  { id: 21, grade: "中2", domain: "B", name: "平行線と角", pre: [11, 267] },
+  { id: 22, grade: "中2", domain: "B", name: "合同と証明", pre: [21] },
+  { id: 23, grade: "中2", domain: "B", name: "三角形", pre: [22] },
+  { id: 24, grade: "中2", domain: "B", name: "四角形", pre: [23] },
+  { id: 20, grade: "中2", domain: "D", name: "確率", pre: [289] },
+  { id: 477, grade: "中2", domain: "D", name: "四分位範囲", pre: [19] },
+
+  // ---------- 中3（13単元） ----------
+  { id: 25, grade: "中3", domain: "A", name: "式と乗法公式", pre: [317] },
+  { id: 27, grade: "中3", domain: "A", name: "因数分解", pre: [25, 476] },
+  { id: 558, grade: "中3", domain: "A", name: "式の計算の利用", pre: [27] },
+  { id: 29, grade: "中3", domain: "A", name: "平方根", pre: [476] },
+  { id: 30, grade: "中3", domain: "A", name: "√をふくむ計算", pre: [25, 29] },
+  { id: 31, grade: "中3", domain: "A", name: "二次方程式", pre: [27, 30] },
+  { id: 32, grade: "中3", domain: "A", name: "二次方程式の利用", pre: [31] },
+  { id: 33, grade: "中3", domain: "C", name: "関数 y=ax²", pre: [17] },
+  { id: 35, grade: "中3", domain: "B", name: "相似な図形", pre: [22, 285] },
+  { id: 313, grade: "中3", domain: "B", name: "平行線と線分の比", pre: [35] },
+  { id: 37, grade: "中3", domain: "B", name: "円周角の定理", pre: [23] },
+  { id: 38, grade: "中3", domain: "B", name: "三平方の定理", pre: [30, 35] },
+  { id: 559, grade: "中3", domain: "D", name: "標本調査", pre: [20, 477] },
+
+  // ---------- 数学Ⅰ（16単元） ----------
+  { id: 562, grade: "数学Ⅰ", domain: "A", name: "式の計算", pre: [25] },
+  { id: 563, grade: "数学Ⅰ", domain: "A", name: "因数分解", pre: [27, 562] },
+  { id: 564, grade: "数学Ⅰ", domain: "A", name: "実数と平方根", pre: [30] },
+  { id: 566, grade: "数学Ⅰ", domain: "A", name: "１次不等式", pre: [6] },
+  { id: 599, grade: "数学Ⅰ", domain: "A", name: "集合", pre: [476] },
+  { id: 601, grade: "数学Ⅰ", domain: "A", name: "命題", pre: [599] },
+  { id: 603, grade: "数学Ⅰ", domain: "C", name: "２次関数とグラフ①", pre: [33, 562] },
+  { id: 604, grade: "数学Ⅰ", domain: "C", name: "２次関数とグラフ②", pre: [603] },
+  { id: 605, grade: "数学Ⅰ", domain: "C", name: "２次関数の値の変化", pre: [604] },
+  { id: 608, grade: "数学Ⅰ", domain: "C", name: "２次方程式", pre: [31, 563] },
+  { id: 612, grade: "数学Ⅰ", domain: "C", name: "２次不等式", pre: [566, 604, 608] },
+  { id: 614, grade: "数学Ⅰ", domain: "B", name: "三角比①", pre: [35, 38] },
+  { id: 654, grade: "数学Ⅰ", domain: "B", name: "三角比②", pre: [614] },
+  { id: 615, grade: "数学Ⅰ", domain: "B", name: "正弦定理と余弦定理", pre: [654] },
+  { id: 651, grade: "数学Ⅰ", domain: "D", name: "データの分析①", pre: [477] },
+  { id: 653, grade: "数学Ⅰ", domain: "D", name: "データの分析➁", pre: [651] },
+];
+
+// ------------------------------------------------------------
+// ここから下は「自動で計算する部分」です（手で書き換える必要はありません）
+// ------------------------------------------------------------
+
+// eboard の単元ページURL
+function eboardUrl(unit) {
+  return EBOARD_BASE + unit.id + "/";
+}
+
+// 「次のステップ」を pre から逆算して、各単元に next として付ける
+(function buildNext() {
+  const byId = new Map(UNITS.map((u) => [u.id, u]));
+  UNITS.forEach((u) => (u.next = []));
+  UNITS.forEach((u) => u.pre.forEach((p) => byId.get(p) && byId.get(p).next.push(u.id)));
+})();
+
+// データの点検（番号の重複・存在しない前提・ぐるぐる回る前提関係を見つける）
+function checkUnits() {
+  const problems = [];
+  const order = new Map(UNITS.map((u, i) => [u.id, i]));
+  if (order.size !== UNITS.length) problems.push("id が重複しています");
+  UNITS.forEach((u) =>
+    u.pre.forEach((p) => {
+      if (!order.has(p)) problems.push(`${u.name}: 前提 ${p} が見つかりません`);
+      else if (order.get(p) >= order.get(u.id)) problems.push(`${u.name}: 前提 ${p} が自分より後ろにあります`);
+    })
+  );
+  return problems;
+}
+
+// Node.js で `node units.js` と実行したときだけ、点検結果を表示する
+if (typeof module !== "undefined") {
+  module.exports = { UNITS, GRADES, DOMAIN_LABELS, eboardUrl, checkUnits };
+  if (require.main === module) {
+    const counts = {};
+    UNITS.forEach((u) => (counts[u.grade] = (counts[u.grade] || 0) + 1));
+    console.log("単元数:", UNITS.length, JSON.stringify(counts));
+    const problems = checkUnits();
+    console.log(problems.length ? problems.join("\n") : "点検OK：問題は見つかりませんでした");
+  }
+}
+
+</script>
+
+<script>
+"use strict";
+/* ============================================================
+   つながりMathガイド 生徒用アプリ
+   ============================================================ */
+
+// ---- 先生が配布前に書きかえる場所 --------------------------------
+// ここにGASのURLを入れておくと、生徒が設定画面で入力しなくても同期が始まります。
+const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbyeIYfd8ZzFGPgonhTJESU6GYJpaSh-Bip9XofrIj0VQrOLbuqi6WMXseHCNloLX4pK/exec";
+
+// 植物が育つタイミング（「できた！」の数）※仮の値です
+const PLANT_STAGES = [
+  { min: 0,  emoji: "🌱" },
+  { min: 3,  emoji: "🌿" },
+  { min: 10, emoji: "🌻" },
+  { min: 25, emoji: "🌳" },
+  { min: 50, emoji: "🌸" },
+];
+// ------------------------------------------------------------------
+
+const STORE_KEY = "tsunagariMath.v1";
+const byId = new Map(UNITS.map((u) => [u.id, u]));
+
+// ---------- 保存データ（ブラウザの localStorage に入れる） ----------
+function loadState() {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { s = {}; }
+  s.userId = s.userId || "user_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+  s.nickname = s.nickname || "";
+  s.done = s.done || {};           // { 単元id: できた日時 }
+  s.sync = s.sync || { enabled: false, url: "" };
+  // まだURLが入っていなければ、先生が用意したURLを自動で使う
+  if (!s.sync.url && DEFAULT_GAS_URL) s.sync = { enabled: true, url: DEFAULT_GAS_URL };
+  s.pending = !!s.pending;         // 送信に失敗して、まだ送れていない記録があるか
+  return s;
+}
+let state = loadState();
+let saveWarned = false;
+function saveState() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch (e) {
+    if (!saveWarned) toast("⚠️ このブラウザでは記録を保存できませんでした");
+    saveWarned = true;             // 同じ注意を何度も出さない
+  }
+}
+
+// ---------- 小さな道具 ----------
+const $ = (id) => document.getElementById(id);
+function esc(text) {
+  return String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function stageOf(grade) { return grade.startsWith("小") ? "小" : grade.startsWith("中") ? "中" : "高"; }
+function domainLabel(u) { return DOMAIN_LABELS[stageOf(u.grade)][u.domain]; }
+function isDone(id) { return !!state.done[id]; }
+function doneCount(list) { return list.filter((u) => isDone(u.id)).length; }
+function isSyncReady() { return state.sync.enabled && isValidGasUrl(state.sync.url); }
+function isValidGasUrl(url) { return /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(url); }
+
+let toastTimer;
+function toast(message) {
+  const t = $("toast");
+  t.textContent = message;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+// eboardを新しいタブで開く。
+// カード全体のクリックと重ならないよう「伝播停止」と「既定動作の無効化」の両方を行う（旧版の教訓）
+window.openEboard = function (url, event) {
+  event.stopPropagation();
+  event.preventDefault();
+  window.open(url, "_blank", "noopener,noreferrer");
+};
+
+// ---------- 画面を描く ----------
+// いま表示している場所（例："#/" 表紙、"#/g/2" 小3の一覧、"#/u/214" 単元ページ）
+let route = location.hash || "#/";
+// 画面を切りかえる。URLの # の部分も変えておくと、ブラウザの「戻る」ボタンが使える。
+// （環境によっては # を変えられないことがあるので、その場合も画面だけは必ず切りかえる）
+function go(to) {
+  route = to;
+  try { if (location.hash !== to) location.hash = to; } catch (e) { /* 何もしない */ }
+  render();
+}
+
+function render() {
+  const hash = decodeURIComponent(route || "#/");
+  const g = hash.match(/^#\/g\/(\d+)$/);
+  const u = hash.match(/^#\/u\/(\d+)$/);
+  let html;
+  if (g && GRADES[+g[1]]) html = viewGrade(+g[1]);
+  else if (u && byId.has(+u[1])) html = viewUnit(byId.get(+u[1]));
+  else html = viewHome();
+  $("app").innerHTML = html;
+  $("nickChip").textContent = "👤 " + (state.nickname || "ニックネーム") + " ✏️";
+  renderPlant(false);
+  window.scrollTo(0, 0);
+}
+
+function viewHome() {
+  const cards = GRADES.map((g, i) => {
+    const list = UNITS.filter((u) => u.grade === g.key);
+    const n = doneCount(list);
+    return `<button class="card grade-card" data-go="#/g/${i}">
+      <div class="emoji">${g.emoji}</div>
+      <div class="gname">${esc(g.key)}</div>
+      <div class="count">${n} / ${list.length}</div>
+      <div class="bar"><i style="width:${(n / list.length) * 100}%"></i></div>
+    </button>`;
+  }).join("");
+  return `<h1>つながりMathガイド</h1>
+    <p class="lead">チャレンジする学年を選んでください</p>
+    <div class="grid grades">${cards}</div>`;
+}
+
+function viewGrade(index) {
+  const g = GRADES[index];
+  const list = UNITS.filter((u) => u.grade === g.key);
+  const labels = DOMAIN_LABELS[stageOf(g.key)];
+  const used = [...new Set(list.map((u) => u.domain))].sort();
+  const legend = used.map((d) => `<span class="badge" style="--dom:var(--dom-${d})">${esc(labels[d])}</span>`).join("");
+  const cards = list.map((u) => `<button class="card unit-card ${isDone(u.id) ? "done" : ""}" style="--dom:var(--dom-${u.domain})" data-go="#/u/${u.id}">
+      <span class="uname">${esc(u.name)}</span>
+      ${isDone(u.id) ? '<span class="mark" aria-label="できた">✅</span>' : ""}
+    </button>`).join("");
+  return `<button class="back" data-go="#/">← 学年をえらぶ</button>
+    <h1>${g.emoji} ${esc(g.key)}</h1>
+    <p class="lead">チャレンジする単元をクリックしてください</p>
+    <div class="legend">${legend}</div>
+    <div class="grid units">${cards}</div>`;
+}
+
+// 復習・次のステップに並べる小さなカード
+function linkCard(u) {
+  return `<div class="card link-card" style="--dom:var(--dom-${u.domain})" data-go="#/u/${u.id}" role="link" tabindex="0">
+      <span class="g">${esc(u.grade)}</span>
+      <span class="uname">${isDone(u.id) ? "✅ " : ""}${esc(u.name)}</span>
+      <span class="btn eboard small" role="button" tabindex="0" data-eboard="${esc(eboardUrl(u))}">💻 eboard</span>
+    </div>`;
+}
+
+function viewUnit(u) {
+  const gradeIndex = GRADES.findIndex((g) => g.key === u.grade);
+  const done = isDone(u.id);
+  const pre = u.pre.map((id) => byId.get(id));
+  const next = u.next.map((id) => byId.get(id));
+
+  const review = pre.length ? `<section class="section review">
+      <h2>💡 苦手かも？…ココで確かめよう</h2>
+      <p class="advice">アドバイス: 上から順番に復習してみよう</p>
+      ${pre.map(linkCard).join("")}
+    </section>` : "";
+
+  const nextSection = next.length ? `<section class="section next">
+      <h2>🎯 できた！…ココにチャレンジしてみよう</h2>
+      ${next.map(linkCard).join("")}
+    </section>` : "";
+
+  return `<button class="back" data-go="#/g/${gradeIndex}">← ${esc(u.grade)}の単元一覧</button>
+    <div class="hero" style="--dom:var(--dom-${u.domain})">
+      <span class="badge gray">${GRADES[gradeIndex].emoji} ${esc(u.grade)}</span>
+      <span class="badge" style="--dom:var(--dom-${u.domain})">${esc(domainLabel(u))}</span>
+      <h1>${esc(u.name)}</h1>
+      <span class="btn eboard" role="button" tabindex="0" data-eboard="${esc(eboardUrl(u))}">💻 eboardで学ぶ</span>
+      <p class="hint">📓✏️ ノートとえんぴつを用意して、書きながら考えるのがおすすめ</p>
+    </div>
+    ${review}
+    <div class="done-wrap">
+      <button class="btn done-btn ${done ? "is-done" : ""}" data-action="toggleDone" data-id="${u.id}">
+        ${done ? "🎉 できた！" : "✅ できた！"}
+      </button>
+      ${done ? '<div class="done-note">もう一度おすと取り消せます</div>' : ""}
+    </div>
+    ${nextSection}`;
+}
+
+function currentPlant() {
+  const n = doneCount(UNITS);
+  let emoji = PLANT_STAGES[0].emoji;
+  PLANT_STAGES.forEach((s) => { if (n >= s.min) emoji = s.emoji; });
+  return { n, emoji };
+}
+function renderPlant(animate) {
+  const { n, emoji } = currentPlant();
+  const el = $("plant");
+  el.innerHTML = `<span class="p-emoji">${emoji}</span><span class="p-text">できた！<br><b>${n}</b> / ${UNITS.length}</span>`;
+  if (animate) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
+}
+
+// ---------- 「できた！」 ----------
+function toggleDone(id) {
+  const unit = byId.get(id);
+  if (isDone(id)) {
+    delete state.done[id];
+    saveState();
+    render();
+    syncToCloud(null);             // 取り消しも進捗として送る（学習履歴には追記しない）
+  } else {
+    state.done[id] = new Date().toISOString();
+    saveState();
+    render();
+    renderPlant(true);
+    syncToCloud(unit);
+  }
+}
+
+// ---------- クラウド同期（GASへ送信） ----------
+// Content-Type を text/plain にするのがポイント。
+// application/json だとブラウザが「事前確認（プリフライト）」を送り、GASが答えられず失敗するため。
+async function syncToCloud(latestUnit) {
+  if (!isSyncReady()) return;
+  const completed = UNITS.filter((u) => isDone(u.id));
+  const payload = {
+    userId: state.userId,
+    nickname: state.nickname,
+    totalProgress: Math.round((completed.length / UNITS.length) * 100),
+    completedCount: completed.length,
+    completedTopics: completed.map((u) => ({ id: u.id, grade: u.grade, name: u.name })),
+    latestTopic: latestUnit ? { id: latestUnit.id, grade: latestUnit.grade, name: latestUnit.name } : null,
+  };
+  try {
+    const res = await fetch(state.sync.url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const answer = await res.json();           // GASからの返事（{ ok: true } なら書きこみ成功）
+    if (!answer.ok) throw new Error(answer.error || "GAS側でエラー");
+    state.pending = false;
+    if (latestUnit) toast("☁️ 記録をとどけました");
+  } catch (e) {
+    state.pending = true;
+    toast("☁️ いまは送れませんでした。あとでもう一度送ります");
+    console.warn("クラウド同期に失敗:", e);
+  }
+  saveState();
+}
+
+// ---------- ダイアログ ----------
+// ニックネームはいつでも変えられる。
+// だれの記録かは「ユーザーID」で見分けるので、名前を変えても記録はつながる。
+function openNick() {
+  const firstTime = !state.nickname;
+  $("nickInput").value = state.nickname;
+  $("nickErr").textContent = "";
+  $("nickCancel").hidden = firstTime;     // 初回は必ず入力してもらう
+  $("nickFirstNote").hidden = !firstTime;
+  $("dlgNick").showModal();
+}
+function saveNick() {
+  const name = $("nickInput").value.trim();
+  if (!name) { $("nickErr").textContent = "ニックネームを入力してください"; return; }
+  state.nickname = name;
+  saveState();
+  $("dlgNick").close();
+  render();
+  if (isSyncReady()) syncToCloud(null);
+  else $("dlgPrompt").showModal();        // 未設定なら設定をうながす
+}
+function openSettings() {
+  document.querySelectorAll("dialog[open]").forEach((d) => d.close());
+  $("syncOn").checked = state.sync.enabled;
+  $("syncUrl").value = state.sync.url;
+  $("uidText").textContent = state.userId;
+  $("setErr").textContent = "";
+  $("dlgSettings").showModal();
+}
+function saveSettings() {
+  const enabled = $("syncOn").checked;
+  const url = $("syncUrl").value.trim();
+  // クラウド同期は必須機能なので、正しく設定できていないと保存させない
+  if (!enabled) { $("setErr").textContent = "クラウド同期をONにしてください"; return; }
+  if (!url) { $("setErr").textContent = "GAS URLを入力してください"; return; }
+  if (!isValidGasUrl(url)) { $("setErr").textContent = "URLの形が正しくありません（https://script.google.com/macros/s/…/exec）"; return; }
+  state.sync = { enabled, url };
+  saveState();
+  $("dlgSettings").close();
+  toast("設定を保存しました");
+  syncToCloud(null);
+}
+
+// ---------- クリックをまとめて受け取る ----------
+document.addEventListener("click", (event) => {
+  const eb = event.target.closest("[data-eboard]");
+  if (eb) { window.openEboard(eb.dataset.eboard, event); return; }
+
+  const act = event.target.closest("[data-action]");
+  if (act) {
+    const a = act.dataset.action;
+    if (a === "toggleDone") toggleDone(+act.dataset.id);
+    else if (a === "editNick") openNick();
+    else if (a === "saveNick") saveNick();
+    else if (a === "openSettings") openSettings();
+    else if (a === "saveSettings") saveSettings();
+    else if (a === "closeDialog") act.closest("dialog").close();
+    return;
+  }
+
+  const go = event.target.closest("[data-go]");
+  if (go) { window.go(go.dataset.go); }
+});
+// キーボードでも操作できるように（Enterキー）
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
+  const el = event.target;
+  if (el.id === "nickInput") { saveNick(); return; }
+  if (el.matches("[data-eboard]")) { window.openEboard(el.dataset.eboard, event); return; }
+  if (el.matches("div[data-go]")) { go(el.dataset.go); }
+});
+// 初回のニックネーム入力はEscキーで閉じられないようにする
+$("dlgNick").addEventListener("cancel", (event) => { if (!state.nickname) event.preventDefault(); });
+
+// ブラウザの「戻る」「進む」ボタンに対応
+window.addEventListener("hashchange", () => {
+  const to = location.hash || "#/";
+  if (to !== route) { route = to; render(); }
+});
+
+// ---------- 起動 ----------
+saveState();                       // 自動で作ったユーザーIDを保存
+render();
+if (!state.nickname) openNick();
+else if (state.pending) syncToCloud(null);   // 前回送れなかった記録を送り直す
+</script>
+</body>
+</html>
